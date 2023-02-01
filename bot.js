@@ -9,19 +9,24 @@ client.on('ready', () => {
 });
 
 client.on('messageCreate', (msg) => {
-	if (msg.content.toLowerCase() === 'ping') {
-		msg.reply('Pong!')
-	} else if (msg.content.toLowerCase() === "channel") {
-		msg.guild.channels.create({
-			name: "channel-name-test",
-			type: 0,
-			permissionOverwrites: [{
-				id: msg.guild.id,
-				allow: ["ViewChannel"],
-			}]
-		});
-		msg.channel.send("Channel created!");
 
+	if (msg.channel.name === "kai-bot-test") { //Change this name to your own testing channel name
+		splitCommand = msg.content.split(" ");
+
+		if (splitCommand[0] === '!ping') {
+			msg.reply('Pong!')
+		} else if (splitCommand[0] === "!channel") {
+
+			msg.guild.channels.create({
+				name: splitCommand[1], // This will break if invalid channel name given.s
+				type: 0,
+				permissionOverwrites: [{
+					id: msg.guild.id,
+					allow: ["ViewChannel"],
+				}]
+			});
+			msg.channel.send("Channel created!");
+		}
 	}
 });
 
