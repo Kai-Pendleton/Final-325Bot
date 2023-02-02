@@ -1,7 +1,7 @@
 # Private325Bot
 Private version of our 325 bot. If you aren't a dev, get out!
 
-##Current Commands
+## Current Commands
 
 - !ping - Bot replies with "Pong!"
 - !channel [name] - Create a new text channel with the name provided.
