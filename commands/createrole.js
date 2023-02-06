@@ -7,14 +7,14 @@ module.exports = {
 		.setName('createrole')
 		.setDescription('Lets you create a new role with a color '),
 	async execute(interaction) {
-		await interaction.reply('Getting array!');
+		await interaction.reply({
+			content: 'Getting array!',
+			ephemeral: true
+		});
 		try {
-			//const path = path.join('C:\Users\austi\Desktop\DiscordBot\New folder\Private325Bot\data\colors.json', '');
-			console.log(__dirname);
-			const data = fs.readFileSync('C:\\Users\\austi\\Desktop\\DiscordBot\\New folder\\Private325Bot\\data\\colors.json', 'utf8');
-			const jsonDATA = JSON.parse(data);
+			const colorsPath = path.join(__dirname, '..', 'data', "colors.json");
+			const data = JSON.parse(fs.readFileSync(colorsPath, 'utf8'));
 			console.log(data);
-			console.log(jsonDATA);
 		} catch (err) {
 			console.error(err);
 		}
