@@ -51,41 +51,7 @@ client.on('messageCreate', async (msg) => {
 		
 		splitCommand = msg.content.split(" ");
 
-		if (splitCommand[0] === '!ping') {
-			msg.reply('Pong!')
-
-		} else if (splitCommand[0] === "!channel") {
-			await msg.guild.channels.create({
-				name: splitCommand[1], // This will break if invalid channel name given.s
-				type: 0,
-				permissionOverwrites: [{
-					id: msg.guild.id,
-					allow: ["ViewChannel"],
-				}]
-			});
-			msg.channel.send("Channel created!");
-
-		} else if (splitCommand[0] === "!duplicate") {
-			const duplicatedChannel = await msg.guild.channels.create({
-				name: splitCommand[1], // This will break if invalid channel name given.
-				type: 0,
-				permissionOverwrites: [{
-					id: msg.guild.id,
-					allow: ["ViewChannel"],
-				}]
-			});
-
-			var messages = await msg.channel.messages.fetch({ limit: 25 });
-			messages = Array.from(messages.values());
-
-			for (var i=messages.length-1; i>=0; i--) {
-				if (messages[i].content.split(" ")[0] === "!duplicate") {
-					continue;
-				}
-				await duplicatedChannel.send({ content: messages[i].content, embeds: messages[i].embeds, files: Array.from(messages[i].attachments.values()) });
-			}
-
-		} else if (splitCommand[0] === '!createRole') {
+		if (splitCommand[0] === '!createRole') {
 
             msg.guild.roles.create({
                 //data: {  color: 'FF0000' }
