@@ -9,7 +9,7 @@ module.exports = {
 			.setDescription('Channel to duplicate (Preceeded by #)'))
 		.addStringOption(option =>
 			option.setName('destination')
-			.setDescription('Name of new channel')),
+			.setDescription('Name of new channel (only lowercase, 0-9, and - allowed)')),
 
 	async execute(interaction) {
 		const template = interaction.options.getChannel('template');
@@ -29,7 +29,7 @@ module.exports = {
 			}]
 		});
 
-		var messages = await template.messages.fetch({ limit: 25 });
+		var messages = await template.messages.fetch({ limit: 50 });
 		messages = Array.from(messages.values());
 
 		for (var i=messages.length-1; i>=0; i--) {
