@@ -14,7 +14,9 @@ module.exports = {
 		try {
 			const colorsPath = path.join(__dirname, '..', 'data', "colors.json");
 			const data = JSON.parse(fs.readFileSync(colorsPath, 'utf8'));
-			console.log(data);
+			const StudentArray = data.student;
+			const VetArray = data.veteran;
+			console.log(VetArray[1]);
 		} catch (err) {
 			console.error(err);
 		}
