@@ -9,7 +9,7 @@ module.exports = {
 		.addStringOption(option =>
 			option.setName('name')
 			.setDescription('Name of new semester. Ex. Winter 2023')),
-	async execute(interaction) {
+	async execute(interaction, client) {
 
 		await interaction.reply({
 			content: 'Creating semester!',
@@ -20,8 +20,8 @@ module.exports = {
 
 		sem1 = new Semester(name);
 
-		if (!fs.existsSync("data/" + sem1.name + ".json")) {
-			fs.writeFileSync("data/" + sem1.name + ".json", JSON.stringify(sem1, null, 2),"utf-8");
+		if (!fs.existsSync("data/semesters/" + sem1.name + ".json")) {
+			fs.writeFileSync("data/semesters/" + sem1.name + ".json", JSON.stringify(sem1, null, 2),"utf-8");
 		} else {
 			await interaction.followUp({
 				content: "Semester already exists!",
