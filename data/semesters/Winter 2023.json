@@ -1,0 +1,20 @@
+{
+  "name": "Winter 2023",
+  "courseList": [
+    {
+      "name": "csc325",
+      "meetLoc": "yes",
+      "meetTime": "no"
+    },
+    {
+      "name": "csc325",
+      "meetLoc": "yes",
+      "meetTime": "no"
+    },
+    {
+      "name": "csc325",
+      "meetLoc": "yes",
+      "meetTime": "no"
+    }
+  ]
+}

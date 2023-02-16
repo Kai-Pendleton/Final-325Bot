@@ -11,7 +11,7 @@ module.exports = {
 			option.setName('destination')
 			.setDescription('Name of new channel (only lowercase, 0-9, and - allowed)')),
 
-	async execute(interaction) {
+	async execute(interaction, client) {
 		const template = interaction.options.getChannel('template');
 		const destination = interaction.options.getString('destination');
 

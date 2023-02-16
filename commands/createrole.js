@@ -60,7 +60,7 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('createrole')
 		.setDescription('Lets you create a new role with a color '),
-	async execute(interaction) {
+	async execute(interaction, client) {
 		await interaction.reply({
 			content: 'Getting array!',
 			ephemeral: true
