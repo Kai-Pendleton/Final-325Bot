@@ -1,6 +1,11 @@
 
 class Course {
 
+	categoryId;
+	studentRoleId;
+	veteranRoleId;
+
+
     constructor(name, meetLoc, meetTime) {
         this.name = name;
         this.meetLoc = meetLoc;
