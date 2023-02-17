@@ -50,5 +50,10 @@ module.exports = {
 		// Update semester file
 		semesterObject.updateFile();
 
+		await interaction.followUp({
+			content: "Semester deleted successfully!",
+			ephemeral: true
+		});
+
 	},
 };

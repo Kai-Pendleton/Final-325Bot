@@ -45,7 +45,6 @@ module.exports = {
 			return;
 		}
 
-		//console.log(sem1);
 		// Create course object and add to semester.
 		course1 = new Course(name, meetingLoc, meetingTime);
 		sem1.addCourse(course1);

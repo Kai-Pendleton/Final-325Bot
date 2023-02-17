@@ -1,9 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { Permissions } = require('discord.js');
 //const fs = require('fs');
-//const path = require('path');
-//const guild = client.guilds.cache.get('980553630480474232');
-//const { Permissions } = require('discord.js');
 
 
 

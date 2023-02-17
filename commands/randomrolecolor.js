@@ -7,8 +7,7 @@ module.exports = {
         .setName('randomrolecolor')
         .setDescription('assigns random role color'),
     async execute(interaction) {
-        const roleColors = JSON.parse(fs.readFileSync('./role-colors.json')).colors;
-        //const roleColors = path.join(__dirname, "./role-colors.json");
+        const roleColors = JSON.parse(fs.readFileSync('./role-colors.json')).colors; // utf-8?
         //const data = JSON.parse(fs.readFileSync(roleColors, 'utf8'));
         const usedColors = await interaction.guild.roles.cache.map(role => role.color);
 
