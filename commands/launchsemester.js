@@ -35,6 +35,7 @@ module.exports = {
 		template = await interaction.guild.channels.fetch(allTemplateIds.id); // Main course template
 		// TODO: Make sure courses cannot be initialized more than once.
 
+		// Read semester object from file
 		var semesterObject;
 		if (fs.existsSync("data/semesters/" + semesterName + ".json")) {
 			data = fs.readFileSync("data/semesters/" + semesterName + ".json", "utf-8");
@@ -56,8 +57,8 @@ module.exports = {
     		templateChannelIds.push(channel[1].id);	
 		}
 
-		console.log(templateChannelNames);
-		console.log(templateChannelIds);
+
+		// Runs this loop once for each course in the semester's courseList
 		for (courseIndex in semesterObject.courseList) {
 			// Create new class category
 			const duplicatedCategory = await interaction.guild.channels.create({
@@ -69,6 +70,7 @@ module.exports = {
 				}]
 			});
 
+			// Assign categoryId of new category to course
 			semesterObject.courseList[courseIndex].categoryId = duplicatedCategory.id;
 
 			// Duplicate all original template channels into new category
@@ -82,13 +84,11 @@ module.exports = {
 						allow: ["ViewChannel"],
 					}]
 				});
-				duplicatedChannel.setParent(duplicatedCategory.id);
+				await duplicatedChannel.setParent(duplicatedCategory.id);
 
 				var templateChannel1 = await interaction.guild.channels.fetch(templateChannelIds[i]);
-				console.log(templateChannel1);
 				var templateMessages = await templateChannel1.messages.fetch({ limit: 50 });
-				console.log(templateMessages);
-				templateMessages = Array.from(templateMessages.values()); // TODO: Just use for-of lol
+				templateMessages = Array.from(templateMessages.values());
 
 				for (var j = templateMessages.length-1; j>=0; j--) {
 					await duplicatedChannel.send({ content: templateMessages[j].content, embeds: templateMessages[j].embeds, files: Array.from(templateMessages[j].attachments.values()) });

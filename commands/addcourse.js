@@ -48,9 +48,8 @@ module.exports = {
 		//console.log(sem1);
 		// Create course object and add to semester.
 		course1 = new Course(name, meetingLoc, meetingTime);
-		console.log(course1);
 		sem1.addCourse(course1);
-		console.log(sem1);
+
 
 
 		await interaction.followUp({
