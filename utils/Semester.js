@@ -1,4 +1,5 @@
 const fs = require('fs');
+const Course = require('../utils/Course.js');
 
 class Semester {
 
