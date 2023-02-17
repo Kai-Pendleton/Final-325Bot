@@ -1,0 +1,38 @@
+{
+  "colors": [
+    "#FF0000",  //red
+    "#FFA500",  //orange
+    "#FFFF00",  //yellow
+    "#008000",  //green
+    "#0000FF",  //blue
+    "#800080",  //purple
+    "#FFC0CB",  //lime green
+    "#00FFFF",  //light blue
+    "#800000",  //maroon
+    "#FF00FF",  //pink
+    "#00FF00",  //bright green (close to lime green)
+    "#008080",  //dark blue green  
+    "#000080",  //dark blue
+    "#808000",  //dark gold
+    "#FF6347",  //salmon
+    "#FF69B4",  //light pink  
+    "#FF4500",  //bright orange
+    "#32CD32",  //light green (similar to lime green)
+    "#1E90FF",  //sky blue (similar to light blue)
+    "#BA55D3",  //dark purple 
+    "#FFD700",  //light gold (similar to dark gold)
+    "#7CFC00",  //lime green v2 (another light lime green)
+    "#40E0D0",  //aqua
+    "#FF1493",  //bright lime green (another lime green)
+    "#9400D3",  //dark purple (similar to 22)
+    "#00FA9A",  //very light lime
+    "#66CDAA",  //darker aqua
+    "#ADD8E6",  //light steel
+    "#E6E6FA",  //off white purple
+    "#B0C4DE",  //light steel (similar to 30)
+    "#D2B48C",  //cappuccino
+    "#C71585",  //bright dark pink
+    "#9370DB",  //light dark purple
+    "#20B2AA"   //light dark aqua
+  ]
+}
