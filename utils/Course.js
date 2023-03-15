@@ -4,6 +4,7 @@ class Course {
 	categoryId;
 	studentRoleId;
 	veteranRoleId;
+    optionalChannels = [];
 
 
     constructor(name, meetLoc, meetTime) {
