@@ -20,9 +20,9 @@ module.exports = {
 		});
 
 		// Read template category id from file
-		var allTemplateIds;
+		let allTemplateIds;
 		if (fs.existsSync("data/templateId.json")) {
-			data = fs.readFileSync("data/templateId.json", "utf-8");
+			let data = fs.readFileSync("data/templateId.json", "utf-8");
 			allTemplateIds = Object.assign(new Object(), JSON.parse(data));
 		} else {
 			await interaction.followUp({
@@ -32,13 +32,10 @@ module.exports = {
 			return;
 		}
 
-		template = await interaction.guild.channels.fetch(allTemplateIds.id); // Main course template
-		// TODO: Make sure courses cannot be initialized more than once.
-
 		// Read semester object from file
-		var semesterObject;
+		let semesterObject;
 		if (fs.existsSync("data/semesters/" + semesterName + ".json")) {
-			data = fs.readFileSync("data/semesters/" + semesterName + ".json", "utf-8");
+			let data = fs.readFileSync("data/semesters/" + semesterName + ".json", "utf-8");
 			semesterObject = Object.assign(new Semester(), JSON.parse(data));
 		} else {
 
@@ -49,17 +46,28 @@ module.exports = {
 			return;
 		}
 
+		let template = await interaction.guild.channels.fetch(allTemplateIds.id); // Main course template
+		// TODO: Make sure courses cannot be initialized more than once.
 		// Grab all template channel ids and names
-		templateChannelIds = [];
-		templateChannelNames = [];
-		for (channel of template.children.cache) {
+		let templateChannelIds = [];
+		let templateChannelNames = [];
+		for (let channel of template.children.cache) {
     		templateChannelNames.push(channel[1].name);
     		templateChannelIds.push(channel[1].id);	
 		}
 
+		let optionalChannelsCategory = await interaction.guild.channels.fetch(allTemplateIds.optionalId); // Main course template
+		// Grab all optional channel ids and names
+		let optionalChannelIds = [];
+		let optionalChannelNames = [];
+		for (channel of optionalChannelsCategory.children.cache) {
+    		optionalChannelNames.push(channel[1].name);
+    		optionalChannelIds.push(channel[1].id);	
+		}
+
 
 		// Runs this loop once for each course in the semester's courseList
-		for (courseIndex in semesterObject.courseList) {
+		for (let courseIndex in semesterObject.courseList) {
 			// Create new class category
 			const duplicatedCategory = await interaction.guild.channels.create({
 				name: semesterObject.courseList[courseIndex].name + " - " + semesterName,
@@ -74,7 +82,7 @@ module.exports = {
 			semesterObject.courseList[courseIndex].categoryId = duplicatedCategory.id;
 
 			// Duplicate all original template channels into new category
-			for (var i = 0; i < templateChannelNames.length; i++) {
+			for (let i in templateChannelNames) {
 
 				const duplicatedChannel = await interaction.guild.channels.create({
 					name: templateChannelNames[i], // This will break if invalid channel name given.
@@ -86,14 +94,38 @@ module.exports = {
 				});
 				await duplicatedChannel.setParent(duplicatedCategory.id);
 
-				var templateChannel1 = await interaction.guild.channels.fetch(templateChannelIds[i]);
-				var templateMessages = await templateChannel1.messages.fetch({ limit: 50 });
+				let templateChannel1 = await interaction.guild.channels.fetch(templateChannelIds[i]);
+				let templateMessages = await templateChannel1.messages.fetch({ limit: 50 });
 				templateMessages = Array.from(templateMessages.values());
 
-				for (var j = templateMessages.length-1; j>=0; j--) {
+				for (let j = templateMessages.length-1; j>=0; j--) {
 					await duplicatedChannel.send({ content: templateMessages[j].content, embeds: templateMessages[j].embeds, files: Array.from(templateMessages[j].attachments.values()) });
 				}
 
+			}
+
+			if (semesterObject.courseList[courseIndex].optionalChannels !== undefined && semesterObject.courseList[courseIndex].optionalChannels.length != 0) {
+				for (let i in semesterObject.courseList[courseIndex].optionalChannels) {
+
+					const duplicatedChannel = await interaction.guild.channels.create({
+						name: optionalChannelNames[i], // This will break if invalid channel name given.
+						type: 0, // 0 is text channel
+						permissionOverwrites: [{
+							id: interaction.guild.id,
+							allow: ["ViewChannel"],
+						}]
+					});
+					await duplicatedChannel.setParent(duplicatedCategory.id);
+
+					let templateChannel1 = await interaction.guild.channels.fetch(optionalChannelIds[i]);
+					let templateMessages = await templateChannel1.messages.fetch({ limit: 50 });
+					templateMessages = Array.from(templateMessages.values());
+
+					for (let j = templateMessages.length-1; j>=0; j--) {
+						await duplicatedChannel.send({ content: templateMessages[j].content, embeds: templateMessages[j].embeds, files: Array.from(templateMessages[j].attachments.values()) });
+					}
+
+				}
 			}
 		}
 

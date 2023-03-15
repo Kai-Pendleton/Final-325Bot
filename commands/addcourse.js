@@ -30,11 +30,11 @@ module.exports = {
 			ephemeral: true
 		});
 
-		var sem1;
+		let sem1;
 
 		// Retrieve Semester from file
 		if (fs.existsSync("data/semesters/" + semesterName + ".json")) {
-			data = fs.readFileSync("data/semesters/" + semesterName + ".json", "utf-8");
+			let data = fs.readFileSync("data/semesters/" + semesterName + ".json", "utf-8");
 			sem1 = Object.assign(new Semester(), JSON.parse(data));
 		} else {
 
@@ -57,7 +57,7 @@ module.exports = {
 		}
 
 		// Retrieve optional channels from template id in templateId.json
-		var allTemplateIds;
+		let allTemplateIds;
 		if (fs.existsSync("data/templateId.json")) {
 			allTemplateIds = require('../data/templateId.json');
 		} else {
@@ -68,19 +68,86 @@ module.exports = {
 			return;
 		}
 
-		optionalChannelsCategory = await interaction.guild.channels.fetch(allTemplateIds.optionalId); // Main course template
+		let optionalChannelsCategory = await interaction.guild.channels.fetch(allTemplateIds.optionalId); // Main course template
 
 		// Grab all optional channel ids and names
-		optionalChannelIds = [];
-		optionalChannelNames = [];
+		let optionalChannelIds = [];
+		let optionalChannelNames = [];
 		for (channel of optionalChannelsCategory.children.cache) {
     		optionalChannelNames.push(channel[1].name);
     		optionalChannelIds.push(channel[1].id);	
-    		console.log(channel[1].name);
 		}
 
-		const row = new ActionRowBuilder()
-			.addComponents(
+		let row1 = new ActionRowBuilder();
+		let row2 = new ActionRowBuilder();
+		let row3 = new ActionRowBuilder();
+		let row4 = new ActionRowBuilder();
+		let row5 = new ActionRowBuilder();
+
+		// Initialize Buttons
+		for (let index in optionalChannelNames) {
+			if (index > 2) {
+				if (index > 7){
+					if (index > 12){
+						if (index > 17){
+							if (index > 22) {
+								interaction.followUp({
+									content: "You have more than 23 optional channels. This is above the maximum. Please reduce the number of optional channels and try again.",
+									ephemeral: true
+								});
+								return;
+							}
+							// Optional channels 19-23 inclusive, use row 5
+							row5.addComponents(
+								new ButtonBuilder()
+									.setCustomId(index.toString())
+									.setLabel(`${optionalChannelNames[index]}`)
+									.setStyle(ButtonStyle.Primary),
+								);
+
+							continue;
+						}
+						// Optional channels 14-18 inclusive, use row 4
+						row4.addComponents(
+							new ButtonBuilder()
+								.setCustomId(index.toString())
+								.setLabel(`${optionalChannelNames[index]}`)
+								.setStyle(ButtonStyle.Primary),
+							);
+
+						continue;
+					}
+					// Optional channels 9-13 inclusive, use row 3
+					row3.addComponents(
+						new ButtonBuilder()
+							.setCustomId(index.toString())
+							.setLabel(`${optionalChannelNames[index]}`)
+							.setStyle(ButtonStyle.Primary),
+						);
+
+					continue;
+				}
+				// Optional channels 4-8 inclusive, use row 2
+				row2.addComponents(
+					new ButtonBuilder()
+						.setCustomId(index.toString())
+						.setLabel(`${optionalChannelNames[index]}`)
+						.setStyle(ButtonStyle.Primary),
+					);
+
+				continue;
+			}
+			// First 3 optional channels, use row 1
+			row1.addComponents(
+				new ButtonBuilder()
+					.setCustomId(index.toString())
+					.setLabel(`${optionalChannelNames[index]}`)
+					.setStyle(ButtonStyle.Primary),
+				);
+
+		}
+
+		row1.addComponents(
 				new ButtonBuilder()
 					.setCustomId('Add')
 					.setLabel('Add the course!')
@@ -90,25 +157,40 @@ module.exports = {
 					.setLabel('Cancel!')
 					.setStyle(ButtonStyle.Danger),
 			);
-		const promptMsg = await interaction.followUp({
+
+		let actionRowList = [row1];
+		if (row2.components.length > 0) actionRowList.push(row2);
+		if (row3.components.length > 0) actionRowList.push(row3);
+		if (row4.components.length > 0) actionRowList.push(row4);
+		if (row5.components.length > 0) actionRowList.push(row5);
+
+		let promptMsg = await interaction.editReply({
 			content: "What optional channels does " + name + " require?",
-			components: [row],
+			components: actionRowList,
 			ephemeral: true
 		});
 
-		const collector = promptMsg.createMessageComponentCollector({ componentType: ComponentType.Button, time: 30000 });
+		const collector = promptMsg.createMessageComponentCollector({ componentType: ComponentType.Button, time: 50000 });
+		let endFlag = false;
+		let optionalChannelsList = [];
 
-		collector.on('collect', i => {
+		collector.on('collect', async i => {
 			if (i.user.id === interaction.user.id) {
 				switch (i.customId) {
 				case "Add":
+
+					for (let optIndex in optionalChannelsList) {
+						optionalChannelsList[optIndex] = optionalChannelIds[Number(optionalChannelsList[optIndex])];
+					}
+
 					// Create course object and add to semester.
-					course1 = new Course(name, meetingLoc, meetingTime);
+					course1 = new Course(name, meetingLoc, meetingTime, optionalChannelsList);
 					sem1.addCourse(course1);
 					i.reply({
 						content: "Course created!",
 						ephemeral: true
 					});
+					endFlag = true;
 					collector.stop();
 					break;
 				case "Cancel":
@@ -116,11 +198,29 @@ module.exports = {
 						content: "Action canceled.",
 						ephemeral: true
 					});
+					endFlag = true;
 					collector.stop();
 					break;
 				default:
-					i.reply("Something went wrong with this command.");
-					console.log("${i.customId} button pressed but not handled.")
+					let index = i.customId;
+					for (actionRow of actionRowList){
+						for (button of actionRow.components) {
+							console.log(button.data.custom_id);
+							if (i.customId == button.data.custom_id) {
+								button.setDisabled(true);
+								promptMsg = await interaction.editReply({
+									content: "What optional channels does " + name + " require?",
+									components: actionRowList,
+									ephemeral: true
+								});
+
+								optionalChannelsList.push(Number(i.customId));
+							}
+						}
+					}
+					// Silently reply to interaction to prevent error.
+					i.deferUpdate();
+
 				}
 			} else {
 				i.reply({ content: `These buttons aren't for you!`, ephemeral: true });
@@ -128,7 +228,7 @@ module.exports = {
 		});
 
 		collector.on('end', collected => {
-			if (collected.size == 0) {
+			if (!endFlag) {
 				interaction.followUp({
 					content: "Command timed out. Please run again.",
 					ephemeral: true

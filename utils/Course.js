@@ -4,13 +4,13 @@ class Course {
 	categoryId;
 	studentRoleId;
 	veteranRoleId;
-    optionalChannels = [];
 
 
-    constructor(name, meetLoc, meetTime) {
+    constructor(name, meetLoc, meetTime, optionalChannels) {
         this.name = name;
         this.meetLoc = meetLoc;
         this.meetTime = meetTime;
+        this.optionalChannels = optionalChannels;
     }
 
     endCourse(client) {
