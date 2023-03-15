@@ -58,9 +58,14 @@ module.exports ={
 
         const embed = new EmbedBuilder()
         .setColor('DarkPurple')
-        .setTitle('Course Selection')
-        .setDescription(`React with the buttons below to get the specified roles! (${student1},${student2},${student3},${student4},${student5},${student6})`)
-        
+        .setTitle('Course Selection Menu')
+        .setDescription(`React with the buttons to be entered into your correct course (${student1},${student2},${student3},${student4},${student5},${student6})`)
+        .addFields([
+            {
+                name: 'How to End Up in the Right Course',
+                value: "-Verify your schedule\n-Select the matching course from the buttons below\n-After making your selection you will recieve a message to know you were successfully added to your class\n-Lastly, double-check that you are in the correct course and have access to the correct channels",
+            },
+        ])
         await interaction.reply({ embeds: [embed], components: [button, button2]});
 
         const collector= await interaction.channel.createMessageComponentCollector();
