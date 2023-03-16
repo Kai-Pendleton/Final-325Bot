@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const { Permissions } = require('discord.js');
-//const fs = require('fs');
+const fs = require('fs');
 
 
 
@@ -20,20 +20,70 @@ module.exports = {
 		const roleName = interaction.options.getString('name');
 		const rolePermissions = interaction.options.getRole('permissions');
 
+		const pickColor = setColor();
 		try {
-			const newRole = await interaction.guild.roles.create({
+			const studentRole = await interaction.guild.roles.create({
 				name: roleName,
 				permissions: rolePermissions.permissions,
+				color: pickColor.student 
 			});
 
-			await interaction.reply(`Role ${newRole.name} created with permissions ${newRole.permissions.toArray().join(', ')}`);
-		} catch (error) {
+			const vetRole = await interaction.guild.roles.create({
+				name: roleName+" veteran",
+				permissions: rolePermissions.permissions,
+				color: pickColor.veteran
+			});
+
+			await interaction.reply(`Role ${studentRole.name} and ${vetRole.name} created with permissions ${studentRole.permissions.toArray().join(', ')}`);
+		}
+
+		catch (error) {
 			console.error(error);
 			await interaction.reply('There was an error creating the role.');
 		}
 	},
+
+
 };
 
+function setColor() {
+	const findColors = require("../data/colors.json") 
+
+	//const colorspath = path.join(__dirname, '..', 'data', "colors.json");
+	//const data = json.parse(fs.readfilesync(colorspath, 'utf8'));
+	const colorsUsed = findColors.inUse;
+	const studentArray = findColors.student;
+	const vetArray = findColors.veteran;
+
+	let studentColor;
+	let vetColor;
+	
+
+	for (let i = 0; i < findColors.inUse.length; i++)
+	{
+		if (findColors.inUse[i] == 0) {
+
+			studentColor = studentArray[i];
+			vetColor = vetArray[i];
+			findColors.inUse[i] = 1;
+			console.log(studentColor);
+			console.log(vetColor);
+			fs.writeFileSync("data/colors.json", JSON.stringify(findColors, null, 2), "utf-8");
+			break;
+		}
+		else if (findColors.inUse[i] == 1 && i == findColors.inUse.length - 1)
+		{
+			//no colors left to use
+
+		}
+		
+
+	}
+
+	//console.log(vetArray[1]);
+	return {student: studentColor, veteran: vetColor};
+
+}
 
 
 
