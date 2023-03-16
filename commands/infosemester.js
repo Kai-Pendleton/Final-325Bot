@@ -9,30 +9,25 @@ module.exports = {
     async execute(interaction) {
         const directoryPath = './data/semesters';
 
-        const files = readdirSync(directoryPath);                                           //Read all files under the /data/semesters directory
+        const files = readdirSync(directoryPath); //Read all files under the /data/semesters directory
                                        
-        const jsonFiles = files.filter(file => file.endsWith('.json'));                     //Filter only the .json files
+        const jsonFiles = files.filter(file => file.endsWith('.json')); //Filter only the .json files
 
         await interaction.reply({
-            content: 'Semester List'
+            content: 'Semester List',
+            ephemeral: true
         });
 
-        for (const file of jsonFiles) {                                                     //Print the contents of each .json file
+        for (const file of jsonFiles) {
             const filePath = `${directoryPath}/${file}`;
-            //const data = require('../' + filePath);
             let data = readFileSync(filePath, "utf-8");
             semesterObject = Object.assign(new Semester(), JSON.parse(data));
 
             console.log(data);
             await interaction.followUp({
-                content: JSON.stringify(data).replace(/\\r/g, '\r').replace(/\\n/g, '\n')
+                content: JSON.stringify(data).replace(/\\r/g, '\r').replace(/\\n/g, '\n'),
+                ephemeral: true
             });
         }
     },
 };
-
-//let semesterObject;
-//(fs.existsSync("data/semesters/" + semesterName + ".json")) {
-//    let data = fs.readFileSync("data/semesters/" + semesterName + ".json", "utf-8");
-//    semesterObject = Object.assign(new Semester(), JSON.parse(data));
-//} 
