@@ -25,7 +25,7 @@ module.exports = {
 
             console.log(data);
             await interaction.followUp({
-                content: JSON.stringify(data).replace(/[\\r\\n]/g, "\u200B")//.replace(/\r?/g, '').replace(/\\n/g, "\u200B")
+                content: JSON.stringify(data).replace(/\\r/g, '\r').replace(/\\n/g, '\n')
             });
         }
     },
