@@ -56,15 +56,23 @@ module.exports ={
 					.setStyle(ButtonStyle.Secondary),
 				) 
 
+
         const embed = new EmbedBuilder()
         .setColor('DarkPurple')
         .setTitle('Course Selection Menu')
-        .setDescription(`React with the buttons to be entered into your correct course (${student1},${student2},${student3},${student4},${student5},${student6})`)
-        .addFields([
+         .addFields([
             {
                 name: 'How to End Up in the Right Course',
                 value: "-Verify your schedule\n-Select the matching course from the buttons below\n-After making your selection you will recieve a message to know you were successfully added to your class\n-Lastly, double-check that you are in the correct course and have access to the correct channels",
             },
+            {
+                name:"How to Remove Role",
+                value: "If you somehow end up in the wrong class just select that role again and you will recieve a message telling you that course was removed."
+            },
+            {
+                name: "IMPORTANT",
+                value: "Removing the student role DOES NOT equal dropping the course\nIf you would like to drop the course you will need to do it through SIS",
+            }
         ])
         await interaction.reply({ embeds: [embed], components: [button, button2]});
 
@@ -74,31 +82,60 @@ module.exports ={
             const member =i.member;
 
             if(i.customId === 'class1'){
-                member.roles.add(student1);
-                i.reply({content: `Role added`,ephemeral:true});
-            }
-            else if(i.customId === 'class2'){
-                member.roles.add(student2);
-                i.reply({content: `Role added`,ephemeral:true});
-            }
-            else if(i.customId === 'class3'){
-                member.roles.add(student3);
-                i.reply({content: `Role added`,ephemeral:true});
-            }
-            else if(i.customId === 'class4'){
-                member.roles.add(student4);
-                i.reply({content: `Role added`,ephemeral:true});
-            }
-            else if(i.customId === 'class5'){
-                member.roles.add(student5);
-                i.reply({content: `Role added`,ephemeral:true});
-            }
-            else if(i.customId === 'class6'){
-                member.roles.add(student6);
-                i.reply({content: `Role added`,ephemeral:true});
-            }
+				if (!member.roles.cache.has(student1.id)) {
+					member.roles.add(student1);
+					await i.reply({ content: 'Role added', ephemeral:true });
+	
+				} else {
+					member.roles.remove(student1);
+					await i.reply({ content: 'Role removed', ephemeral:true });
+				}
+			}else if (i.customId === 'class2') {
+				if (!member.roles.cache.has(student2.id)) {
+					member.roles.add(student2);
+					await i.reply({ content: 'Role added', ephemeral:true });
+				} else {
+					member.roles.remove(student2);
+					await i.reply({ content: 'Role removed', ephemeral:true });
+				}
+			}else if (i.customId === 'class3') {
+				if (!member.roles.cache.has(student3.id)) {
+					member.roles.add(student3);
+					await i.reply({ content: 'Role added', ephemeral:true });
+				} else {
+					member.roles.remove(student3);
+					await i.reply({ content: 'Role removed', ephemeral:true });
+				}
+			}else if (i.customId === 'class4') {
+				if (!member.roles.cache.has(student4.id)) {
+					member.roles.add(student4);
+					await i.reply({ content: 'Role added', ephemeral:true });
+				} else {
+					member.roles.remove(student4);
+					await i.reply({ content: 'Role removed', ephemeral:true });
+				}
+			}else if (i.customId === 'class5') {
 
-        });
+				if (!member.roles.cache.has(student5.id)) {
+					member.roles.add(student5);
+					await i.reply({ content: 'Role added', ephemeral:true });
+				} else {
+					member.roles.remove(student5);
+					await i.reply({ content: 'Role removed', ephemeral:true });
+				}
+			}
+			 else if (i.customId === 'class6') {
+                
+				if (!member.roles.cache.has(student6.id)) {
+					member.roles.add(student6);
+					await i.reply({ content: 'Role added', ephemeral:true });
+				} else {
+					member.roles.remove(student6);
+					await i.reply({ content: 'Role removed', ephemeral:true });
+				}
+			}
+        
+        }); 
 
 
     },
