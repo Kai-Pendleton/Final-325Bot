@@ -20,6 +20,7 @@ module.exports = {
 		const roleName = interaction.options.getString('name');
 		const rolePermissions = interaction.options.getRole('permissions');
 
+		console.log(roleExist(roleName, interaction));
 		const pickColor = setColor();
 		try {
 			const studentRole = await interaction.guild.roles.create({
@@ -45,6 +46,38 @@ module.exports = {
 
 
 };
+
+
+function roleExist(testRole,message)
+{
+
+	let studentRole = message.guild.roles.cache.find(studentRole => studentRole.name === testRole);
+	let vetRole = message.guild.roles.cache.find(vetRole => vetRole.name === testRole + " veteran");
+
+	if (vetRole && studentRole) {
+
+		return 0;
+	}
+	else if(!vetRole && studentRole) {
+
+		return 1;
+	}
+
+	else if (vetRole && !studentRole) {
+
+		return 2;
+	}
+
+	else
+	{
+
+		return 3;
+	}
+
+
+
+}
+
 
 function setColor() {
 	const findColors = require("../data/colors.json") 
