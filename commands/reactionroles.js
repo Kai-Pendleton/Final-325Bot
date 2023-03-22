@@ -111,10 +111,11 @@ module.exports ={
 					member.roles.add(student4);
 					await i.reply({ content: 'Role added', ephemeral:true });
 				} else {
-					member.roles.remove(role4);
+					member.roles.remove(student4);
 					await i.reply({ content: 'Role removed', ephemeral:true });
 				}
 			}else if (i.customId === 'class5') {
+
 				if (!member.roles.cache.has(student5.id)) {
 					member.roles.add(student5);
 					await i.reply({ content: 'Role added', ephemeral:true });
@@ -123,7 +124,16 @@ module.exports ={
 					await i.reply({ content: 'Role removed', ephemeral:true });
 				}
 			}
-			 
+			 else if (i.customId === 'class6') {
+                
+				if (!member.roles.cache.has(student6.id)) {
+					member.roles.add(student6);
+					await i.reply({ content: 'Role added', ephemeral:true });
+				} else {
+					member.roles.remove(student6);
+					await i.reply({ content: 'Role removed', ephemeral:true });
+				}
+			}
         
         }); 
 
