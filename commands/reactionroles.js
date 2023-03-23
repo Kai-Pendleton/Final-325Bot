@@ -4,7 +4,7 @@ const {PermissionsBitField, ButtonStyle,ActionRowBuilder, ButtonBuilder, EmbedBu
 module.exports ={
     data: new SlashCommandBuilder ()
         .setName('reactionroles')
-        .setDescription('This is the reaction role message command :)')
+        .setDescription('Creates a message students can react to that will give them a specific role')
         .addRoleOption(option => option.setName(`student1`).setDescription('You now have the student1 role').setRequired(true))
         .addRoleOption(option => option.setName(`student2`).setDescription('You now have the student2 role').setRequired(true))
         .addRoleOption(option => option.setName(`student3`).setDescription('You now have the student3 role').setRequired(true))
