@@ -5,8 +5,8 @@ const fs = require('fs');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('deletesemester')
-		.setDescription('Deletes all categories and channels for a given semester.')
+		.setName('endsemester')
+		.setDescription('Archives all categories and channels for a given semester.')
 		.addStringOption(option =>
 			option.setName('semester')
 			.setDescription('Name of semester whose course channels will be deleted.')),
@@ -46,7 +46,7 @@ module.exports = {
 		);
 
 		const promptMsg = await interaction.editReply({
-			content: "Are you sure you want to delete this semester?",
+			content: "Are you sure you want to archive this semester?",
 			components: [row1],
 			ephemeral: true
 		});
@@ -64,23 +64,19 @@ module.exports = {
 						// Runs this loop once for each course in the semester's courseList
 						for (courseIndex in semesterObject.courseList) {
 
-							// TODO: Catch error if channel is already deleted.
-							category = await interaction.guild.channels.fetch(semesterObject.courseList[courseIndex].categoryId);
-
-							for (channel of category.children.cache) {
-								channel[1].delete("This channel was automatically deleted by the bot due to the use of the /deletesemester command.");
+							const category = await interaction.guild.channels.fetch(semesterObject.courseList[courseIndex].categoryId);
+							await category.permissionOverwrites.delete(semesterObject.courseList[courseIndex].studentRoleId); // Remove viewing permissions.
+							
+							const studentArray = await interaction.guild.roles.cache.get(semesterObject.courseList[courseIndex].studentRoleId).members;
+							for (student of studentArray) {
+								student[1].roles.add(semesterObject.courseList[courseIndex].veteranRoleId);
+								student[1].roles.remove(semesterObject.courseList[courseIndex].studentRoleId);
 							}
-							category.delete("This category was automatically deleted by the bot due to the use of the /deletesemester command.");
-							// Set category id to undefined.
-							semesterObject.courseList[courseIndex].categoryId = void 0;
+
 						}
 
-						// Update semester file
-						semesterObject.updateFile();
-
-
 						i.reply({
-							content: "Semester removed!",
+							content: "Semester archived!",
 							ephemeral: true
 						});
 						endFlag = true;

@@ -68,14 +68,75 @@ module.exports = {
 
 		// Runs this loop once for each course in the semester's courseList
 		for (let courseIndex in semesterObject.courseList) {
+
+			const courseRoles = roleExist(semesterObject.courseList[courseIndex].name, interaction);
+			let studentRole;
+			let vetRole;
+			if ( (courseRoles.student === undefined) && (courseRoles.veteran === undefined) ) { // Neither role exists. Make em.
+
+				const pickColor = setColor();
+				studentRole = await interaction.guild.roles.create({
+					name: semesterObject.courseList[courseIndex].name + " Students",
+					permissions: interaction.guild.roles.everyone.permissions,
+					color: pickColor.student 
+				});
+
+				vetRole = await interaction.guild.roles.create({
+					name: semesterObject.courseList[courseIndex].name + " Veteran",
+					permissions: interaction.guild.roles.everyone.permissions,
+					color: pickColor.veteran
+				});
+
+				courseRoles.student = studentRole;
+				courseRoles.veteran = vetRole;
+
+			} else if ( (courseRoles.student === undefined) != (courseRoles.veteran === undefined) )  {// One is found, but not the other
+
+				const pickColor = setColor();
+				studentRole = await interaction.guild.roles.create({
+					name: semesterObject.courseList[courseIndex].name + " Students",
+					permissions: interaction.guild.roles.everyone.permissions,
+					color: pickColor.student 
+				});
+
+				vetRole = await interaction.guild.roles.create({
+					name: semesterObject.courseList[courseIndex].name + " Veteran",
+					permissions: interaction.guild.roles.everyone.permissions,
+					color: pickColor.veteran
+				});
+
+				courseRoles.student = studentRole;
+				courseRoles.veteran = vetRole;
+
+				let warningContent = "Only one of student or veteran roles for " + semesterObject.courseList[courseIndex].name + " was found. Check for duplicates and remove the oldest one.";
+				await interaction.followUp({
+					content: warningContent,
+					ephemeral: true
+				});
+
+			} // else both roles are found, and their ids are already in courseRoles
+
+			semesterObject.courseList[courseIndex].studentRoleId = courseRoles.student.id;
+			semesterObject.courseList[courseIndex].veteranRoleId = courseRoles.veteran.id;
+
 			// Create new class category
 			const duplicatedCategory = await interaction.guild.channels.create({
 				name: semesterObject.courseList[courseIndex].name + " - " + semesterName,
 				type: 4, // 4 is category
-				permissionOverwrites: [{
+				permissionOverwrites: [
+				{
 					id: interaction.guild.id,
+					deny: ["ViewChannel"],
+				},
+				{
+					id: interaction.guild.roles.cache.get(courseRoles.student.id),
 					allow: ["ViewChannel"],
-				}]
+				},
+				{
+					id: client.user.id,
+					allow: ["ViewChannel"],
+				},
+				],
 			});
 
 			// Assign categoryId of new category to course
@@ -129,8 +190,62 @@ module.exports = {
 			}
 		}
 
+		interaction.followUp({
+			content: "Semester launched!",
+			ephemeral: true
+		})
 		// Update semester file
 		semesterObject.updateFile();
 
 	},
 };
+
+function roleExist(testRole,message)
+{
+
+	let studentRole = message.guild.roles.cache.find(studentRole => studentRole.name === testRole + " Students");
+	let vetRole = message.guild.roles.cache.find(vetRole => vetRole.name === testRole + " Veteran");
+
+	// will be undefined if not found
+	return { student: studentRole, veteran: vetRole };
+
+}
+
+function setColor() {
+	const findColors = require("../data/colors.json") 
+
+	//const colorspath = path.join(__dirname, '..', 'data', "colors.json");
+	//const data = json.parse(fs.readfilesync(colorspath, 'utf8'));
+	const colorsUsed = findColors.inUse;
+	const studentArray = findColors.student;
+	const vetArray = findColors.veteran;
+
+	let studentColor;
+	let vetColor;
+	
+
+	for (let i = 0; i < findColors.inUse.length; i++)
+	{
+		if (findColors.inUse[i] == 0) {
+
+			studentColor = studentArray[i];
+			vetColor = vetArray[i];
+			findColors.inUse[i] = 1;
+			console.log(studentColor);
+			console.log(vetColor);
+			fs.writeFileSync("data/colors.json", JSON.stringify(findColors, null, 2), "utf-8");
+			break;
+		}
+		else if (findColors.inUse[i] == 1 && i == findColors.inUse.length - 1)
+		{
+			//no colors left to use
+
+		}
+		
+
+	}
+
+	//console.log(vetArray[1]);
+	return {student: studentColor, veteran: vetColor};
+
+}
