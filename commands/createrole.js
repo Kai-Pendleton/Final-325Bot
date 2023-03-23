@@ -30,7 +30,7 @@ module.exports = {
 			});
 
 			const vetRole = await interaction.guild.roles.create({
-				name: roleName+" veteran",
+				name: roleName+" Veteran",
 				permissions: rolePermissions.permissions,
 				color: pickColor.veteran
 			});
@@ -52,7 +52,7 @@ function roleExist(testRole,message)
 {
 
 	let studentRole = message.guild.roles.cache.find(studentRole => studentRole.name === testRole);
-	let vetRole = message.guild.roles.cache.find(vetRole => vetRole.name === testRole + " veteran");
+	let vetRole = message.guild.roles.cache.find(vetRole => vetRole.name === testRole + " Veteran");
 
 	if (vetRole && studentRole) {
 
