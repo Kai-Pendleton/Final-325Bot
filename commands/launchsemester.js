@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
+const { confirmButton } = require('../utils/confirmButton.js');
 const Semester = require('../utils/Semester.js');
 const Course = require('../utils/Course.js');
 const fs = require('fs');
@@ -14,10 +15,9 @@ module.exports = {
 	async execute(interaction, client) {
 		const semesterName = interaction.options.getString('semester');
 
-		await interaction.reply({
-			content: 'Launching ' + semesterName + '!',
-			ephemeral: true
-		});
+		if (!await confirmButton(interaction, "Are you sure you want to launch this semester?", "Launching Semester!")) {
+			return;
+		}
 
 		// Read template category id from file
 		let allTemplateIds;
