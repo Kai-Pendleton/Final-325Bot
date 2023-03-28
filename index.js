@@ -44,24 +44,5 @@ client.on(Events.InteractionCreate, async interaction => {
 	}
 });
 
-client.on('messageCreate', async (msg) => {
-
-	if (msg.channel.name === "kai-bot-test") { //Change this name to your own testing channel name
-		
-		splitCommand = msg.content.split(" ");
-
-		if (splitCommand[0] === '!createRole') {
-
-            msg.guild.roles.create({
-                //data: {  color: 'FF0000' }
-                name: splitCommand[1], //splitCommand[1],
-                color: splitCommand[2],
-                //permissions: ['SEND_MESSAGES', 'VIEW_CHANNEL']
-
-            }).then(roles => console.log("Created new role with name " + splitCommand[1])).catch(console.error);
-        }
-	}
-});
-
 // Log our bot in using the token from dev portal
 client.login(token);
