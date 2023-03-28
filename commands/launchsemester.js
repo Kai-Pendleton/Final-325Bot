@@ -15,6 +15,7 @@ module.exports = {
 	async execute(interaction, client) {
 		const semesterName = interaction.options.getString('semester');
 
+		// Confirmation Message
 		if (!await confirmButton(interaction, "Are you sure you want to launch this semester?", "Launching Semester!")) {
 			return;
 		}
