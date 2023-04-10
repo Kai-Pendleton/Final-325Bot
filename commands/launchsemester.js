@@ -130,7 +130,7 @@ module.exports = {
 					deny: ["ViewChannel"],
 				},
 				{
-					id: interaction.guild.roles.cache.get(courseRoles.student.id),
+					id: courseRoles.student.id,
 					allow: ["ViewChannel"],
 				},
 				{
@@ -146,17 +146,46 @@ module.exports = {
 			// Duplicate all original template channels into new category
 			for (let i in templateChannelNames) {
 
+				let templateChannel1 = await interaction.guild.channels.fetch(templateChannelIds[i]);
+				let templateOverwrite = templateChannel1.permissionOverwrites.cache.get(allTemplateIds.roleId);//.find( element => element.id == templateStudentRole.id);
+				let templatePermissions = {}
+				if (templateOverwrite === undefined) {
+					templatePermissions.allow = ["ViewChannel"];
+					templatePermissions.deny = ["SendMessages"];
+				} else {
+					try {
+						templatePermissions.allow = templateOverwrite.allow.toArray();
+						templatePermissions.deny = templateOverwrite.deny.toArray();
+					} catch (error) {
+						console.error(error);
+						console.log("Something failed when fetching template overwrites!");
+					}
+				}
+
+				// TEMPLATE CHANNEL CANNOT HAVE "General Channel Permissions" AS PERMISSION OVERWRITES BESIDES "View Channel"
+				// ONLY GIVE THE TEMPLATE STUDENT ROLE OVERWRITES FOR "Membership Permissions" and "Text Channel permissions"
 				const duplicatedChannel = await interaction.guild.channels.create({
 					name: templateChannelNames[i], // This will break if invalid channel name given.
 					type: 0, // 0 is text channel
-					permissionOverwrites: [{
-						id: interaction.guild.id,
-						allow: ["ViewChannel"],
-					}]
+					parent: duplicatedCategory.id,
 				});
-				await duplicatedChannel.setParent(duplicatedCategory.id);
 
-				let templateChannel1 = await interaction.guild.channels.fetch(templateChannelIds[i]);
+				await duplicatedChannel.permissionOverwrites.set([
+					{
+						id: courseRoles.student.id,
+						allow: templatePermissions.allow,
+						deny: templatePermissions.deny,
+					},
+					{
+						id: client.user.id,
+						allow: ["ViewChannel"],
+					},
+					{
+						id: interaction.guild.roles.everyone,
+						deny: ["ViewChannel"],
+					},
+				]);
+
 				let templateMessages = await templateChannel1.messages.fetch({ limit: 50 });
 				templateMessages = Array.from(templateMessages.values());
 
@@ -173,21 +202,50 @@ module.exports = {
 			if (semesterObject.courseList[courseIndex].optionalChannels !== undefined && semesterObject.courseList[courseIndex].optionalChannels.length != 0) {
 				for (let i in semesterObject.courseList[courseIndex].optionalChannels) {
 
+					console.log("Name: " + optionalChannelNames[i] + "      Id: " + optionalChannelIds[i]);
+					let templateChannel1 = await interaction.guild.channels.fetch(optionalChannelIds[i]);
+					let templateOverwrite = templateChannel1.permissionOverwrites.cache.get(allTemplateIds.roleId);//.find( element => element.id == templateStudentRole.id);
+					let templatePermissions = {}
+					if (templateOverwrite === undefined) {
+						templatePermissions.allow = ["ViewChannel"];
+						templatePermissions.deny = ["SendMessages"];
+					} else {
+						try {
+							templatePermissions.allow = templateOverwrite.allow.toArray();
+							templatePermissions.deny = templateOverwrite.deny.toArray();
+						} catch (error) {
+							console.error(error);
+							console.log("Something failed when fetching template overwrites!");
+						}
+					}
+
 					const duplicatedChannel = await interaction.guild.channels.create({
 						name: optionalChannelNames[i], // This will break if invalid channel name given.
 						type: 0, // 0 is text channel
-						permissionOverwrites: [{
-							id: interaction.guild.id,
-							allow: ["ViewChannel"],
-						}]
+						parent: duplicatedCategory.id,
 					});
-					await duplicatedChannel.setParent(duplicatedCategory.id);
 
-					let templateChannel1 = await interaction.guild.channels.fetch(optionalChannelIds[i]);
+					await duplicatedChannel.permissionOverwrites.set([
+						{
+							id: courseRoles.student.id,
+							allow: templatePermissions.allow,
+							deny: templatePermissions.deny,
+						},
+						{
+							id: client.user.id,
+							allow: ["ViewChannel"],
+						},
+						{
+							id: interaction.guild.roles.everyone,
+							deny: ["ViewChannel"],
+						},
+					]);
+
+					
 					let templateMessages = await templateChannel1.messages.fetch({ limit: 50 });
 					templateMessages = Array.from(templateMessages.values());
 
-					if (templateChannelNames[i] == "zoom-meeting-info") {
+					if (optionalChannelNames[i] == "zoom-meeting-info") {
 						await duplicatedChannel.send( { content: "Zoom address: " + semesterObject.courseList[courseIndex].meetLoc } );
 						await duplicatedChannel.send( { content: "Class Time: " + semesterObject.courseList[courseIndex].meetTime } );
 					}
