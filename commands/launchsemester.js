@@ -160,6 +160,10 @@ module.exports = {
 				let templateMessages = await templateChannel1.messages.fetch({ limit: 50 });
 				templateMessages = Array.from(templateMessages.values());
 
+				if (templateChannelNames[i] == "zoom-meeting-info") {
+					await duplicatedChannel.send( { content: "Zoom address: " + semesterObject.courseList[courseIndex].meetLoc } );
+					await duplicatedChannel.send( { content: "Class Time: " + semesterObject.courseList[courseIndex].meetTime } );
+				}
 				for (let j = templateMessages.length-1; j>=0; j--) {
 					await duplicatedChannel.send({ content: templateMessages[j].content, embeds: templateMessages[j].embeds, files: Array.from(templateMessages[j].attachments.values()) });
 				}
@@ -183,6 +187,10 @@ module.exports = {
 					let templateMessages = await templateChannel1.messages.fetch({ limit: 50 });
 					templateMessages = Array.from(templateMessages.values());
 
+					if (templateChannelNames[i] == "zoom-meeting-info") {
+						await duplicatedChannel.send( { content: "Zoom address: " + semesterObject.courseList[courseIndex].meetLoc } );
+						await duplicatedChannel.send( { content: "Class Time: " + semesterObject.courseList[courseIndex].meetTime } );
+					}
 					for (let j = templateMessages.length-1; j>=0; j--) {
 						await duplicatedChannel.send({ content: templateMessages[j].content, embeds: templateMessages[j].embeds, files: Array.from(templateMessages[j].attachments.values()) });
 					}
@@ -240,7 +248,7 @@ function setColor() {
 		else if (findColors.inUse[i] == 1 && i == findColors.inUse.length - 1)
 		{
 			//no colors left to use
-
+			console.log("There are no colors left in colors.json!");
 		}
 		
 
