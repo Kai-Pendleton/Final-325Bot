@@ -1,75 +1,40 @@
-const {PermissionsBitField, ButtonStyle,ActionRowBuilder, ButtonBuilder, EmbedBuilder, ComponentType} = require('discord.js');
+const {PermissionsBitField, ButtonStyle,ActionRowBuilder, ButtonBuilder, EmbedBuilder, ComponentType,Message,Client} = require('discord.js');
+const fs = require('fs');
 
 class Reaction{
-
-    constructor(ID){
-        this.ID= ID;
-        this.input =[];
+    constructor(id){
+        this.id= id;
+    }
+    updateFile(){
+        fs.writeFileSync("data/reaction/" + this.id + ".json", JSON.stringify(this, null, 2),"utf-8");
     }
 
-    update(){
+    async startCollector(client){
+        let guild= await client.guilds.fetch(this.guildId);
+        console.log(guild)
+        let channel = await guild.channels.fetch(this.message.channelId);
+        this.message= await channel.fetch(this.message.id);
+        //this.message=Object.assign(new Message(),this.message);
+        console.log(this.message);
 
-    let promptMsg = interaction.reply({ embeds: [embed], components: [button, button2]});
-
-    let collector = promptMsg.createMessageComponentCollector({ componentType: ComponentType.Button });
+        let collector = this.message.createMessageComponentCollector({ componentType: ComponentType.Button });
 
         collector.on('collect', async (i) => {
             const member =i.member;
+            let index=Number(i.customId.substr(7,i.customId.length));
+            console.log(index);
+            if (!member.roles.cache.has(this.roles[index])) {
+                member.roles.add(this.roles[index]);
+                await i.reply({ content: 'Role added', ephemeral:true });
 
-            if(i.customId === 'class1'){
-                if (!member.roles.cache.has(student1.id)) {
-                    member.roles.add(student1);
-                    await i.reply({ content: 'Role added', ephemeral:true });
-    
-                } else {
-                    member.roles.remove(student1);
-                    await i.reply({ content: 'Role removed', ephemeral:true });
-                }
-            }else if (i.customId === 'class2') {
-                if (!member.roles.cache.has(student2.id)) {
-                    member.roles.add(student2);
-                    await i.reply({ content: 'Role added', ephemeral:true });
-                } else {
-                    member.roles.remove(student2);
-                    await i.reply({ content: 'Role removed', ephemeral:true });
-                }
-            }else if (i.customId === 'class3') {
-                if (!member.roles.cache.has(student3.id)) {
-                    member.roles.add(student3);
-                    await i.reply({ content: 'Role added', ephemeral:true });
-                } else {
-                    member.roles.remove(student3);
-                    await i.reply({ content: 'Role removed', ephemeral:true });
-                }
-            }else if (i.customId === 'class4') {
-                if (!member.roles.cache.has(student4.id)) {
-                    member.roles.add(student4);
-                    await i.reply({ content: 'Role added', ephemeral:true });
-                } else {
-                    member.roles.remove(student4);
-                    await i.reply({ content: 'Role removed', ephemeral:true });
-                }
-            }else if (i.customId === 'class5') {
-    
-                if (!member.roles.cache.has(student5.id)) {
-                    member.roles.add(student5);
-                    await i.reply({ content: 'Role added', ephemeral:true });
-                } else {
-                    member.roles.remove(student5);
-                    await i.reply({ content: 'Role removed', ephemeral:true });
-                }
+            } else {
+                member.roles.remove(this.roles[index]);
+                await i.reply({ content: 'Role removed', ephemeral:true });
             }
-             else if (i.customId === 'class6') {
-                
-                if (!member.roles.cache.has(student6.id)) {
-                    member.roles.add(student6);
-                    await i.reply({ content: 'Role added', ephemeral:true });
-                } else {
-                    member.roles.remove(student6);
-                    await i.reply({ content: 'Role removed', ephemeral:true });
-                }}
+            
+            
     })}
 
 };
 
-    module.exports = { Reaction };
+    module.exports = Reaction;

@@ -16,37 +16,50 @@ module.exports ={
 
         async execute(interaction, client) {
 
-            async function Reaction (interaction){
-                const roles=[];
-                const reaction =[];
+            let roles=[];
+            let customid =[];
             
-            const startID= 'studentx';
-            
-               for (i=1;i<=6;i++){
-                roles.push(interaction.options.getRole(`student${i}`));
-               } 
-               for(i=1;i<roles.length;i++){
-                if(roles[i]){
-                    const newID = startID + i;
-                    reaction.push(
-                        new ButtonBuilder()
-                        .setCustomId(newID)
-                        .setLabel(`${student[i].name}`)
-                        .setStyle(ButtonStyle.Secondary),
-                    );
+            const startID= 'student';
+            console.log('1')
+            let row = new ActionRowBuilder()
+        
+            let row2 = new ActionRowBuilder()
+        
+            for (i=0;i<6;i++){
+                let role =interaction.options.getRole(`student${i}`);
+                if(role!== null){
+                    roles.push(role);
                 }
-               }
-                const button = new ActionRowBuilder()
-                .addComponents(reaction)
-            
-                const button2 = new ActionRowBuilder()
-                        .addComponents (reaction) 
-            
-            
-                const embed = new EmbedBuilder()
+
+            } 
+
+            let currentrow =row;
+            for(i=0;i<roles.length;i++){
+                const newID = startID + i;
+                currentrow.addComponents(
+                    new ButtonBuilder()
+                        .setCustomId(newID)
+                        .setLabel(`${roles[i].name}`)
+                        .setStyle(ButtonStyle.Secondary),
+                );
+                roles[i]=roles[i].id;
+                customid.push(newID);
+
+                if(i==4){
+                    currentrow= row2;
+                }
+            }
+            let allrows=[row];
+            if (roles.length>5){
+                allrows.push(row2);
+            }
+        
+     
+
+            const embed = new EmbedBuilder()
                 .setColor('DarkPurple')
                 .setTitle('Course Selection Menu')
-                 .addFields([
+                .addFields([
                     {
                         name: 'How to End Up in the Right Course',
                         value: "-Verify your schedule\n-Select the matching course from the buttons below\n-After making your selection you will recieve a message to know you were successfully added to your class\n-Lastly, double-check that you are in the correct course and have access to the correct channels",
@@ -59,35 +72,18 @@ module.exports ={
                         name: "IMPORTANT",
                         value: "Removing the student role DOES NOT equal dropping the course\nIf you would like to drop the course you will need to do it through SIS",
                     }
-                ])
+                ]);
+            console.log(allrows);
+            let promptMsg = await interaction.reply({embeds: [embed], components: allrows});
 
-            const newID = interaction.options.getID('newID');
+            promptMsg= await promptMsg.fetch();
     
-            role = Reaction(newID);
-    
-            if (!fs.existsSync("data/reaction/" + role.newID + ".json")) {
-                fs.writeFileSync("data/reaction/" + role.newID + ".json", JSON.stringify(role, null, 2),"utf-8");
-            } else {
-                await interaction.followUp({
-                    content: "Something went wrong",
-                    ephemeral: true
-                });
-                return;
-            }
-    
-            await interaction.followUp({
-                content: "Role Assigned",
-                ephemeral: true
-            });
-    
-        await interaction.reply({ embeds: [embed], components: [button, button2]});
-        
-            }
-    },
-};
+            let reactionObj = new Reaction(promptMsg.id);
+            reactionObj.customid=customid;
+            reactionObj.roles=roles;
+            reactionObj.message=promptMsg;
+            reactionObj.guildId=interaction.guildId;
+            reactionObj.updateFile();
+            reactionObj.startCollector(client);
 
-
-/*Take event listener code and put in util files so index file change even ready write in data create collector in store message id 
-Prompt message.id  and store in a file multiple ids array or something
-Fetch message and create new collector for that message 
- */
+        }}

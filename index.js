@@ -1,6 +1,7 @@
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
+const Reaction = require('./utils/Reaction.js');
 const { Client, Collection, Events, GatewayIntentBits, EmbedBuilder, PermissionsBitField, Permissions } = require('discord.js');
 
 const token = process.env.TOKEN;
@@ -24,6 +25,13 @@ for (const file of commandFiles) {
 
 client.on('ready', () => {
 	console.log('Logged in as ' + client.user.tag +'!');
+	let reactionObject;
+	fs.readdirSync("data/reaction/").forEach(file => {
+		let data = fs.readFileSync("data/reaction/"+ file, "utf-8");
+		let reactionObject = Object.assign(new Reaction(), JSON.parse(data));
+		reactionObject.startCollector(client);
+	});
+
 });
 
 client.on(Events.InteractionCreate, async interaction => {
