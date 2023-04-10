@@ -25,8 +25,8 @@ for (const file of commandFiles) {
 
 client.on('ready', () => {
 	console.log('Logged in as ' + client.user.tag +'!');
-	let reactionObject;
 	fs.readdirSync("data/reaction/").forEach(file => {
+		if (file === ".gitignore") return; // in forEach(), return == continue
 		let data = fs.readFileSync("data/reaction/"+ file, "utf-8");
 		let reactionObject = Object.assign(new Reaction(), JSON.parse(data));
 		reactionObject.startCollector(client);
