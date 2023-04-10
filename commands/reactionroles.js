@@ -1,5 +1,5 @@
 const {SlashCommandBuilder} = require('discord.js');
-const {PermissionsBitField, ButtonStyle,ActionRowBuilder, ButtonBuilder, EmbedBuilder} = require('discord.js');
+const {PermissionsBitField, ButtonStyle,ActionRowBuilder, ButtonBuilder, EmbedBuilder, ComponentType} = require('discord.js');
 
 module.exports ={
     data: new SlashCommandBuilder ()
@@ -74,9 +74,9 @@ module.exports ={
                 value: "Removing the student role DOES NOT equal dropping the course\nIf you would like to drop the course you will need to do it through SIS",
             }
         ])
-        await interaction.reply({ embeds: [embed], components: [button, button2]});
+        const promptMsg = await interaction.reply({ embeds: [embed], components: [button, button2]});
 
-        const collector= await interaction.channel.createMessageComponentCollector();
+        const collector = await promptMsg.createMessageComponentCollector({ componentType: ComponentType.Button });
 
         collector.on('collect', async (i) => {
             const member =i.member;
