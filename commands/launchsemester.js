@@ -67,77 +67,96 @@ module.exports = {
 		}
 
 
+
+
 		// Runs this loop once for each course in the semester's courseList
 		for (let courseIndex in semesterObject.courseList) {
 
-			const courseRoles = roleExist(semesterObject.courseList[courseIndex].name, interaction);
-			let studentRole;
-			let vetRole;
-			if ( (courseRoles.student === undefined) && (courseRoles.veteran === undefined) ) { // Neither role exists. Make em.
+			semesterObject.courseList[courseIndex].studentRoleId = [];
+			semesterObject.courseList[courseIndex].veteranRoleId = [];
+			let course = semesterObject.courseList[courseIndex];
 
-				const pickColor = setColor();
-				studentRole = await interaction.guild.roles.create({
-					name: semesterObject.courseList[courseIndex].name + " Students",
-					permissions: interaction.guild.roles.everyone.permissions,
-					color: pickColor.student 
-				});
+			for (let roleIndex in course.name) {
+				const courseRoles = roleExist(course.name[roleIndex], interaction);
+				let studentRole;
+				let vetRole;
+				if ( (courseRoles.student === undefined) && (courseRoles.veteran === undefined) ) { // Neither role exists. Make em.
 
-				vetRole = await interaction.guild.roles.create({
-					name: semesterObject.courseList[courseIndex].name + " Veteran",
-					permissions: interaction.guild.roles.everyone.permissions,
-					color: pickColor.veteran
-				});
+					const pickColor = setColor();
+					studentRole = await interaction.guild.roles.create({
+						name: course.name[roleIndex] + " Students",
+						permissions: interaction.guild.roles.everyone.permissions,
+						color: pickColor.student 
+					});
 
-				courseRoles.student = studentRole;
-				courseRoles.veteran = vetRole;
+					vetRole = await interaction.guild.roles.create({
+						name: course.name[roleIndex] + " Veteran",
+						permissions: interaction.guild.roles.everyone.permissions,
+						color: pickColor.veteran
+					});
 
-			} else if ( (courseRoles.student === undefined) != (courseRoles.veteran === undefined) )  {// One is found, but not the other
+					courseRoles.student = studentRole;
+					courseRoles.veteran = vetRole;
 
-				const pickColor = setColor();
-				studentRole = await interaction.guild.roles.create({
-					name: semesterObject.courseList[courseIndex].name + " Students",
-					permissions: interaction.guild.roles.everyone.permissions,
-					color: pickColor.student 
-				});
+				} else if ( (courseRoles.student === undefined) != (courseRoles.veteran === undefined) )  {// One is found, but not the other
 
-				vetRole = await interaction.guild.roles.create({
-					name: semesterObject.courseList[courseIndex].name + " Veteran",
-					permissions: interaction.guild.roles.everyone.permissions,
-					color: pickColor.veteran
-				});
+					const pickColor = setColor();
+					studentRole = await interaction.guild.roles.create({
+						name: course.name[roleIndex] + " Students",
+						permissions: interaction.guild.roles.everyone.permissions,
+						color: pickColor.student 
+					});
 
-				courseRoles.student = studentRole;
-				courseRoles.veteran = vetRole;
+					vetRole = await interaction.guild.roles.create({
+						name: course.name[roleIndex] + " Veteran",
+						permissions: interaction.guild.roles.everyone.permissions,
+						color: pickColor.veteran
+					});
 
-				let warningContent = "Only one of student or veteran roles for " + semesterObject.courseList[courseIndex].name + " was found. Check for duplicates and remove the oldest one.";
-				await interaction.followUp({
-					content: warningContent,
-					ephemeral: true
-				});
+					courseRoles.student = studentRole;
+					courseRoles.veteran = vetRole;
 
-			} // else both roles are found, and their ids are already in courseRoles
+					let warningContent = "Only one of student or veteran roles for " + course.name[roleIndex] + " was found. Check for duplicates and remove the oldest one.";
+					await interaction.followUp({
+						content: warningContent,
+						ephemeral: true
+					});
 
-			semesterObject.courseList[courseIndex].studentRoleId = courseRoles.student.id;
-			semesterObject.courseList[courseIndex].veteranRoleId = courseRoles.veteran.id;
+				} // else both roles are found, and their ids are already in courseRoles
 
-			// Create new class category
-			const duplicatedCategory = await interaction.guild.channels.create({
-				name: semesterObject.courseList[courseIndex].name + " - " + semesterName,
-				type: 4, // 4 is category
-				permissionOverwrites: [
-				{
-					id: interaction.guild.id,
-					deny: ["ViewChannel"],
-				},
-				{
-					id: courseRoles.student.id,
-					allow: ["ViewChannel"],
-				},
+				semesterObject.courseList[courseIndex].studentRoleId.push(courseRoles.student.id);
+				semesterObject.courseList[courseIndex].veteranRoleId.push(courseRoles.veteran.id);
+
+			}
+
+			let categoryName = semesterObject.courseList[courseIndex].name[0];
+			for (let nameIndex = 1; nameIndex < semesterObject.courseList[courseIndex].name.length; nameIndex++) {
+				categoryName = categoryName + " / " + semesterObject.courseList[courseIndex].name[nameIndex];
+			}
+
+			let categoryOverwrites = [
 				{
 					id: client.user.id,
 					allow: ["ViewChannel"],
 				},
-				],
+				{
+					id: interaction.guild.roles.everyone,
+					deny: ["ViewChannel"],
+				},
+			];
+
+			for (let role of semesterObject.courseList[courseIndex].studentRoleId) {
+				categoryOverwrites.push({
+					id: role,
+					allow: ["ViewChannel"],
+				});
+			}
+
+			// Create new class category
+			const duplicatedCategory = await interaction.guild.channels.create({
+				name: categoryName + " - " + semesterName,
+				type: 4, // 4 is category
+				permissionOverwrites: categoryOverwrites,
 			});
 
 			// Assign categoryId of new category to course
@@ -170,12 +189,7 @@ module.exports = {
 					parent: duplicatedCategory.id,
 				});
 
-				await duplicatedChannel.permissionOverwrites.set([
-					{
-						id: courseRoles.student.id,
-						allow: templatePermissions.allow,
-						deny: templatePermissions.deny,
-					},
+				let channelOverwrites = [
 					{
 						id: client.user.id,
 						allow: ["ViewChannel"],
@@ -184,7 +198,17 @@ module.exports = {
 						id: interaction.guild.roles.everyone,
 						deny: ["ViewChannel"],
 					},
-				]);
+				];
+
+				for (let role of semesterObject.courseList[courseIndex].studentRoleId) {
+					channelOverwrites.push({
+						id: role,
+						allow: templatePermissions.allow,
+						deny: templatePermissions.deny,
+					});
+				}
+
+				await duplicatedChannel.permissionOverwrites.set( channelOverwrites );
 
 				let templateMessages = await templateChannel1.messages.fetch({ limit: 50 });
 				templateMessages = Array.from(templateMessages.values());
@@ -202,7 +226,6 @@ module.exports = {
 			if (semesterObject.courseList[courseIndex].optionalChannels !== undefined && semesterObject.courseList[courseIndex].optionalChannels.length != 0) {
 				for (let i in semesterObject.courseList[courseIndex].optionalChannels) {
 
-					console.log("Name: " + optionalChannelNames[i] + "      Id: " + optionalChannelIds[i]);
 					let templateChannel1 = await interaction.guild.channels.fetch(optionalChannelIds[i]);
 					let templateOverwrite = templateChannel1.permissionOverwrites.cache.get(allTemplateIds.roleId);//.find( element => element.id == templateStudentRole.id);
 					let templatePermissions = {}
@@ -225,12 +248,7 @@ module.exports = {
 						parent: duplicatedCategory.id,
 					});
 
-					await duplicatedChannel.permissionOverwrites.set([
-						{
-							id: courseRoles.student.id,
-							allow: templatePermissions.allow,
-							deny: templatePermissions.deny,
-						},
+					let channelOverwrites = [
 						{
 							id: client.user.id,
 							allow: ["ViewChannel"],
@@ -239,8 +257,17 @@ module.exports = {
 							id: interaction.guild.roles.everyone,
 							deny: ["ViewChannel"],
 						},
-					]);
+					];
 
+					for (let role of semesterObject.courseList[courseIndex].studentRoleId) {
+						channelOverwrites.push({
+							id: role,
+							allow: templatePermissions.allow,
+							deny: templatePermissions.deny,
+						});
+					}
+
+					await duplicatedChannel.permissionOverwrites.set( channelOverwrites );
 					
 					let templateMessages = await templateChannel1.messages.fetch({ limit: 50 });
 					templateMessages = Array.from(templateMessages.values());
@@ -270,7 +297,7 @@ module.exports = {
 	},
 };
 
-function roleExist(testRole,message)
+function roleExist(testRole, message)
 {
 
 	let studentRole = message.guild.roles.cache.find(studentRole => studentRole.name === testRole + " Students");

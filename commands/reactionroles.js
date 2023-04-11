@@ -73,7 +73,7 @@ module.exports ={
                         value: "Removing the student role DOES NOT equal dropping the course\nIf you would like to drop the course you will need to do it through SIS",
                     }
                 ]);
-            console.log(allrows);
+                
             let promptMsg = await interaction.reply({embeds: [embed], components: allrows});
 
             promptMsg= await promptMsg.fetch();

@@ -26,7 +26,7 @@ module.exports = {
         }
 
         const semesterData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-        const courseIndex = semesterData.courseList.findIndex(c => c.name === courseName);
+        const courseIndex = semesterData.courseList.findIndex(c => c.name.includes(courseName));
 
         if (courseIndex === -1) {
             await interaction.reply({ content: `The course "${courseName}" does not exist in semester "${semesterName}".`, ephemeral: true });
