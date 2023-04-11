@@ -7,7 +7,7 @@ class Course {
 
 
     constructor(name, meetLoc, meetTime, optionalChannels) {
-        this.name = name;
+        this.name = [name];
         this.meetLoc = meetLoc;
         this.meetTime = meetTime;
         this.optionalChannels = optionalChannels;
