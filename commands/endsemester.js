@@ -33,22 +33,35 @@ module.exports = {
 			return;
 		}
 
+
 		// Runs this loop once for each course in the semester's courseList
 		for (courseIndex in semesterObject.courseList) {
 
 			const category = await interaction.guild.channels.fetch(semesterObject.courseList[courseIndex].categoryId);
-			await category.permissionOverwrites.delete(semesterObject.courseList[courseIndex].studentRoleId); // Remove viewing permissions from student role.
-			for (channel of category.children.cache) {
-				channel[1].permissionOverwrites.delete(semesterObject.courseList[courseIndex].studentRoleId); // Remove viewing permissions from student role.
-			}
-			
-			const studentArray = await interaction.guild.roles.cache.get(semesterObject.courseList[courseIndex].studentRoleId).members;
-			for (student of studentArray) {
-				student[1].roles.add(semesterObject.courseList[courseIndex].veteranRoleId);
-				student[1].roles.remove(semesterObject.courseList[courseIndex].studentRoleId);
+
+			for (roleIndex in semesterObject.courseList[courseIndex].studentRoleId) {
+
+				await category.permissionOverwrites.delete(semesterObject.courseList[courseIndex].studentRoleId[roleIndex]); // Remove viewing permissions from student role.
+				for (channel of category.children.cache) {
+					await channel[1].permissionOverwrites.delete(semesterObject.courseList[courseIndex].studentRoleId[roleIndex]); // Remove viewing permissions from student role.
+				}
+				
+				const studentRole = await interaction.guild.roles.fetch(semesterObject.courseList[courseIndex].studentRoleId[roleIndex]);
+				const studentArray = studentRole.members;
+				for (student of studentArray.values()) {
+					await student.roles.add(semesterObject.courseList[courseIndex].veteranRoleId[roleIndex]);
+					await student.roles.remove(semesterObject.courseList[courseIndex].studentRoleId[roleIndex]);
+				}
+
 			}
 
 		}
+
+		await interaction.followUp({
+			content: "Semester archived!",
+			ephemeral: true
+		});
+		return;
 
 
 	},
