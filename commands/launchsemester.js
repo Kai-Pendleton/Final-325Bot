@@ -256,7 +256,10 @@ module.exports = {
 				}
 			}
 		}
-
+		await sortRoles(interaction, "veteran");
+		await sortRoles(interaction, "veteran");
+		await sortRoles(interaction, "student");
+		await sortRoles(interaction, "student");
 		interaction.followUp({
 			content: "Semester launched!",
 			ephemeral: true
@@ -298,8 +301,6 @@ function setColor() {
 			studentColor = studentArray[i];
 			vetColor = vetArray[i];
 			findColors.inUse[i] = 1;
-			console.log(studentColor);
-			console.log(vetColor);
 			fs.writeFileSync("data/colors.json", JSON.stringify(findColors, null, 2), "utf-8");
 			break;
 		}
@@ -314,5 +315,83 @@ function setColor() {
 
 	//console.log(vetArray[1]);
 	return {student: studentColor, veteran: vetColor};
+
+}
+
+
+async function sortRoles(message, keyword) {
+
+
+	// find all roles with keyword
+	const filteredRoles = message.guild.roles.cache.filter(role => role.name.toLowerCase().includes(keyword));
+	let tailOfRole = message.guild.roles.cache.filter(role => role.name.toLowerCase().includes("tail"));
+	let midOfRole = message.guild.roles.cache.filter(role => role.name.toLowerCase().includes("mid"));
+
+	let tailPOS = 0;
+	let midPOS = 0;
+	let classNumber = [];
+
+	if (keyword == "student") {
+
+		for (let mid of midOfRole.values()) {
+			midOfRole = await message.guild.roles.fetch(mid.id);
+
+		}
+
+		for (let role of filteredRoles.values()) {
+
+			classNumber.push((role.name.substring(3, 6)));
+
+		}
+
+		classNumber.sort((a, b) => a - b);
+
+		for (let i = 0; i < classNumber.length; i++) {
+
+			midPOS = midOfRole.position;
+			for (let role of filteredRoles.values()) {
+
+				if ((role.name.substring(3, 6) == classNumber[i])) {
+
+					await role.setPosition(midPOS + i + 1);
+
+				}
+			}
+			midOfRole = await message.guild.roles.fetch(midOfRole.id);
+		}
+
+	}
+
+	else if (keyword == "veteran") {
+
+
+
+		for (let tail of tailOfRole.values()) {
+			tailOfRole = await message.guild.roles.fetch(tail.id);
+		}
+
+
+		for (let role of filteredRoles.values()) {
+
+			classNumber.push((role.name.substring(3, 6)));
+		}
+
+		classNumber.sort((a, b) => a - b);
+
+
+		for (let i = 0; i < classNumber.length; i++) {
+			tailPOS = tailOfRole.position;
+			for (let role of filteredRoles.values()) {
+
+				if ((role.name.substring(3, 6) == classNumber[i])) {
+
+					await role.setPosition(tailPOS + i + 1);
+				}
+			}
+			tailOfRole = await message.guild.roles.fetch(tailOfRole.id);
+		}
+	}
+
+
 
 }

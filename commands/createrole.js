@@ -4,6 +4,8 @@ const fs = require('fs');
 
 
 
+
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('create-role')
@@ -20,11 +22,12 @@ module.exports = {
 		const roleName = interaction.options.getString('name');
 		const rolePermissions = interaction.options.getRole('permissions');
 
-		console.log(roleExist(roleName, interaction));
+		//console.log(roleExist(roleName, interaction));
+		//checkColor(interaction);
 		const pickColor = setColor();
 		try {
 			const studentRole = await interaction.guild.roles.create({
-				name: roleName,
+				name: roleName+" Student",
 				permissions: rolePermissions.permissions,
 				color: pickColor.student 
 			});
@@ -79,8 +82,12 @@ function roleExist(testRole,message)
 }
 
 
+
+
+
+
 function setColor() {
-	const findColors = require("../data/colors.json") 
+	const findColors = require("../data/colors.json"); 
 
 	//const colorspath = path.join(__dirname, '..', 'data', "colors.json");
 	//const data = json.parse(fs.readfilesync(colorspath, 'utf8'));
@@ -99,8 +106,8 @@ function setColor() {
 			studentColor = studentArray[i];
 			vetColor = vetArray[i];
 			findColors.inUse[i] = 1;
-			console.log(studentColor);
-			console.log(vetColor);
+			//console.log(studentColor);
+			//console.log(vetColor);
 			fs.writeFileSync("data/colors.json", JSON.stringify(findColors, null, 2), "utf-8");
 			break;
 		}
@@ -122,6 +129,82 @@ function setColor() {
 
 
 
+//function checkColor(message) {
+//	//onst findColors = require("../data/colors.json");
+//	const allColors = JSON.parse(fs.readFileSync('data/colors.json', 'utf8'));
+//	const filteredRoles = message.guild.roles.cache.filter( role => role.name.toLowerCase().includes("student") );
+
+
+//	let notUsed = [];
+//	let index = 0;
+//	let cutOff;
+
+//	for (let i = 0; allColors.inUse[i] == 1; i++) {
+
+	
+//		cutOff = i;
+
+//	}
+
+//	let j = 0;
+//	for (let role of filteredRoles.values()) {
+
+//		console.log("testing color " + role.hexColor + "\n --------");
+//		console.log("cutOFF = " + cutOff + "\n");
+
+//		if ((role.hexColor != allColors.student[j])) {
+
+//			for (let i = 0; allColors.inUse[i] == 1; i++) {
+
+//				console.log("i = " + i);
+//				if (role.hexColor == allColors.student[i]) {
+//					console.log(cutOff + " > " + i)
+//					j++;
+				
+
+//				}
+
+//				else if(cutOff <= i){
+//					console.log(cutOff + " <= " + i)
+//					console.log(role.hexColor);
+//					notUsed[index] = role.hexColor;
+//					index++;
+					
+//				}
+
+
+
+
+
+
+//			}
+
+//		}
+//		j++;
+	
+		
+		
+	
+//	}
+
+//	for (let i = 0; allColors.inUse[i] == 1; i++) {
+
+//		for (let j = 0; j < notUsed.length; i++) {
+
+//			if (allColors.student[i] == notUsed[j]) {
+
+//				allColors.inUse[i] = 0;
+//				fs.writeFileSync("data/colors.json", JSON.stringify(findColors, null, 2), "utf-8");
+
+//			}
+
+//		}
+
+//	}
+
+
+//	//console.log(roleColors);
+//}
 
 
 
