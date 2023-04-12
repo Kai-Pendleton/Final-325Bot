@@ -4,7 +4,6 @@ Private version of our 325 bot. If you aren't a dev, get out!
 ## Current Commands
 
 - /help: Will list all current commands and give information on how to use them.
-- /duplicate: It takes a category and makes a new category with a new name given by the user and copy all channels and messages within channel into new channel.
 - /settemplate: This command will set the templates for all the courses
 - /createsemester: This will create a new semester 
 - /addcourse: This commands allows you to add a course to an existing semesters 
