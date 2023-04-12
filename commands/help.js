@@ -15,6 +15,7 @@ module.exports = {
             { name: '/deletesemester', description: 'This command will completely delete all channels and categories related to a given semester.' },
             { name: '/create-role', description: 'Using this command will take a current role and copy it with its permissions new student and veteran role, assigning it a unique color from color.json.' },
             { name: '/reactionroles', description: 'Creates a message students can react to that will give them a specific role.' },
+            { name: '/purgereactions', description: 'Deletes all content in the data reaction folder.' },
             { name: '/infosemester', description: 'Reads all .json categories under /data/semester and prints out current semester list.' },
             { name: '/help', description: 'Will list all current commands and give information on how to use them.' },
             { name: '/duplicate', description: 'It takes a category and makes a new category with a new name given by the user and copy all channels and messages within channel into new channel.' },
