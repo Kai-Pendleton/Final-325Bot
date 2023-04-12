@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { MessageEmbed, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
+const { confirmButton } = require('../utils/confirmButton.js');
 const Semester = require('../utils/Semester');
 const Course = require('../utils/Course');
 
@@ -17,11 +18,13 @@ module.exports = {
     async execute(interaction) {
         const courseName = interaction.options.getString('course');
         const semesterName = interaction.options.getString('semester');
-
+        if (!await confirmButton(interaction, "Are you sure you want to delete this course?", "Deleting Course!")) {
+			return;
+		}
         const filePath = `data/semesters/${semesterName}.json`;
 
         if (!fs.existsSync(filePath)) {
-            await interaction.reply({ content: `The semester "${semesterName}" does not exist.`, ephemeral: true });
+            await interaction.followUp({ content: `The semester "${semesterName}" does not exist.`, ephemeral: true });
             return;
         }
 
@@ -29,7 +32,7 @@ module.exports = {
         const courseIndex = semesterData.courseList.findIndex(c => c.name.includes(courseName));
 
         if (courseIndex === -1) {
-            await interaction.reply({ content: `The course "${courseName}" does not exist in semester "${semesterName}".`, ephemeral: true });
+            await interaction.followUp({ content: `The course "${courseName}" does not exist in semester "${semesterName}".`, ephemeral: true });
             return;
         }
 
@@ -42,6 +45,6 @@ module.exports = {
             .setTitle('Course Deleted')
             .setDescription(`The course "${courseName}" has been deleted from semester "${semesterName}".`);
 
-        return interaction.reply({ embeds: [embed] });
+        return interaction.followUp({ embeds: [embed] });
     },
 };

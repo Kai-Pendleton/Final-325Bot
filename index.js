@@ -5,7 +5,7 @@ const Reaction = require('./utils/Reaction.js');
 const { Client, Collection, Events, GatewayIntentBits, EmbedBuilder, PermissionsBitField, Permissions } = require('discord.js');
 
 const token = process.env.TOKEN;
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMembers] });
 
 client.commands = new Collection();
 
@@ -36,6 +36,14 @@ client.on('ready', () => {
 
 client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand()) return;
+
+	if (!interaction.member.permissionsIn(interaction.channel).has(PermissionsBitField.Flags.Administrator)) {
+		interaction.reply({
+			content: "You must be an administrator to use this bot!",
+			ephemeral: true
+		});
+		return;
+	}
 
 	const command = interaction.client.commands.get(interaction.commandName);
 
