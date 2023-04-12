@@ -17,7 +17,9 @@ module.exports = {
     async execute(interaction) {
         const courseName = interaction.options.getString('course');
         const semesterName = interaction.options.getString('semester');
-
+        if (!await confirmButton(interaction, "Are you sure you want to delete this course?", "Deleting Course!")) {
+			return;
+		}
         const filePath = `data/semesters/${semesterName}.json`;
 
         if (!fs.existsSync(filePath)) {
