@@ -8,7 +8,6 @@ module.exports = {
         .setDescription('assigns random role color'),
     async execute(interaction) {
         const roleColors = JSON.parse(fs.readFileSync('./role-colors.json')).colors; // utf-8?
-        //const data = JSON.parse(fs.readFileSync(roleColors, 'utf8'));
         const usedColors = await interaction.guild.roles.cache.map(role => role.color);
 
         const availableColors = roleColors.filter(color => !usedColors.includes(color));
@@ -29,12 +28,6 @@ module.exports = {
         })
             .then(async (role) => {
                 await interaction.member.roles.add(role.id);
-                /*const embed = new MessageEmbed()
-                    .setColor('GREEN')
-                    .setTitle('Random Role Color')
-                    .setDescription(`Assigned the color ${color} to ${interaction.author.username}`);
-                */
-                //await interaction.channel.send(embed);
                 await interaction.reply({
                     content:"Role created with a random color "
                 });

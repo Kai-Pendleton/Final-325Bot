@@ -1,6 +1,8 @@
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle, Events, ComponentType } = require('discord.js');
 
-
+// Calling confirmButton will respond to the interaction. You can only
+// respond to interactions once, so make sure all messages from that point
+// use either interaction.editReply or interaction.followUp
 async function confirmButton(interaction, promptString, confirmString) {
 
 	const row1 = new ActionRowBuilder().addComponents(

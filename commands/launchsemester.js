@@ -311,8 +311,6 @@ function roleExist(testRole, message)
 function setColor() {
 	const findColors = require("../data/colors.json") 
 
-	//const colorspath = path.join(__dirname, '..', 'data', "colors.json");
-	//const data = json.parse(fs.readfilesync(colorspath, 'utf8'));
 	const colorsUsed = findColors.inUse;
 	const studentArray = findColors.student;
 	const vetArray = findColors.veteran;
