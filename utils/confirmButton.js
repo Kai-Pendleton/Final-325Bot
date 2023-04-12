@@ -37,7 +37,7 @@ async function confirmButton(interaction, promptString, confirmString) {
 		if (i.user.id === interaction.user.id) {
 			switch (i.customId) {
 				case "Confirm":
-					i.reply({
+					await i.reply({
 						content: confirmString,
 						ephemeral: true
 					});
