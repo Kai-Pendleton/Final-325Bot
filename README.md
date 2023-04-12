@@ -30,6 +30,5 @@ Line 2: CLIENTID=(Bot profile ID)
 
 Line 3: GUILDID=(Server ID)
 
-Invite the bot to your server, deploy the slash commands by running "node deploy-commands.js", then run the bot using "node ." and set the class template and optional channels template with /settemplate. Create base role that all
-student roles will use, do not use keyword "student" for the base role name. ( (Ex) template Student) This will cause base role to be sorted with all other student roles.
+Invite the bot to your server, deploy the slash commands by running "node deploy-commands.js", then run the bot using "node ." and set the class template, optional channels template, and template role with /settemplate. The template role should have all of the permissions a normal student would have for all of the template channels. Do not use "Student" in the template role name (Ex. template Student). This will cause it to be sorted with all the other student roles.
 Now the bot is set up!
