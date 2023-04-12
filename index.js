@@ -37,6 +37,14 @@ client.on('ready', () => {
 client.on(Events.InteractionCreate, async interaction => {
 	if (!interaction.isChatInputCommand()) return;
 
+	if (!interaction.member.permissionsIn(interaction.channel).has(PermissionsBitField.Flags.Administrator)) {
+		interaction.reply({
+			content: "You must be an administrator to use this bot!",
+			ephemeral: true
+		});
+		return;
+	}
+
 	const command = interaction.client.commands.get(interaction.commandName);
 
 	if (!command) {
