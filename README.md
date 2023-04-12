@@ -1,5 +1,5 @@
-﻿# Private325Bot
-Private version of our 325 bot. If you aren't a dev, get out!
+﻿# Final 325Bot
+This is the final version of Group 5's Discord bot for CSC325!
 
 ## Current Commands
 
